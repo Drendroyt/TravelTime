@@ -9,6 +9,9 @@ import UIKit
 
 class FlightDetailViewController: UIViewController {
 
+    var indexPath: IndexPath?
+    weak var delegate: FlightScheduleViewController?
+
     private lazy var travelInfoStack: UIStackView = {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -113,7 +116,7 @@ class FlightDetailViewController: UIViewController {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .horizontal
-        stackView.distribution = .equalSpacing
+        stackView.distribution = .equalCentering
         return stackView
     }()
 
@@ -121,7 +124,7 @@ class FlightDetailViewController: UIViewController {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .horizontal
-        stackView.distribution = .equalSpacing
+        stackView.distribution = .equalCentering
         return stackView
     }()
 
@@ -141,6 +144,7 @@ class FlightDetailViewController: UIViewController {
     private lazy var departureEndCityLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
+        label.textAlignment = .right
         return label
     }()
 
@@ -153,6 +157,7 @@ class FlightDetailViewController: UIViewController {
     private lazy var returnEndCityLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
+        label.textAlignment = .right
         return label
     }()
 
@@ -176,6 +181,15 @@ class FlightDetailViewController: UIViewController {
 
     private func setupNavigationBar() {
         navigationItem.title = "Детали"
+        navigationItem.rightBarButtonItem = {
+            if delegate?.likeStatusList[indexPath!.row] == false {
+                let likeButton = UIBarButtonItem(image: UIImage(systemName: "heart"), style: .plain, target: self, action: #selector(tapLikeButton))
+                return likeButton
+            } else {
+                let likeButton = UIBarButtonItem(image: UIImage(systemName: "heart.fill"), style: .plain, target: self, action: #selector(tapLikeButton))
+                return likeButton
+            }
+        }()
     }
 
     private func layout() {
@@ -194,6 +208,7 @@ class FlightDetailViewController: UIViewController {
         [returnStartCityLabel, returnArrowImageView, returnEndCityLabel].forEach { returnRouteStackView.addArrangedSubview($0) }
 
         let viewInset: CGFloat = 16
+        let labelWidth: CGFloat = 150
         NSLayoutConstraint.activate([
             travelInfoStack.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: viewInset),
             travelInfoStack.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: viewInset),
@@ -210,7 +225,13 @@ class FlightDetailViewController: UIViewController {
             departureInfoStackView.bottomAnchor.constraint(equalTo: returnInfoStackView.topAnchor, constant: -viewInset),
 
             returnInfoStackView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: viewInset),
-            returnInfoStackView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -viewInset)
+            returnInfoStackView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -viewInset),
+
+
+            departureStartCityLabel.widthAnchor.constraint(equalToConstant: labelWidth),
+            departureEndCityLabel.widthAnchor.constraint(equalToConstant: labelWidth),
+            returnStartCityLabel.widthAnchor.constraint(equalToConstant: labelWidth),
+            returnEndCityLabel.widthAnchor.constraint(equalToConstant: labelWidth)
 
         ])
     }
@@ -236,4 +257,15 @@ class FlightDetailViewController: UIViewController {
 
     }
 
+    @objc private func tapLikeButton() {
+        if delegate?.likeStatusList[indexPath!.row] == false {
+            delegate?.likeStatusList.updateValue(true, forKey: indexPath!.row)
+            navigationItem.rightBarButtonItem?.image = UIImage(systemName: "heart.fill")
+            delegate?.scheduleTableView.reloadData()
+        } else {
+            delegate?.likeStatusList.updateValue(false, forKey: indexPath!.row)
+            navigationItem.rightBarButtonItem?.image = UIImage(systemName: "heart")
+            delegate?.scheduleTableView.reloadData()
+        }
+    }
 }

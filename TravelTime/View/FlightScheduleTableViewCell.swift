@@ -9,8 +9,6 @@ import UIKit
 
 class FlightScheduleTableViewCell: UITableViewCell {
 
-    var likeState: Bool = false
-
     weak var delegate: FlightScheduleViewController?
 
     var indexPath: IndexPath?
@@ -20,6 +18,11 @@ class FlightScheduleTableViewCell: UITableViewCell {
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .vertical
         stackView.spacing = 10
+        stackView.layer.borderColor = UIColor.black.cgColor
+        stackView.layer.cornerRadius = 10
+        stackView.layer.borderWidth = 3
+        stackView.layoutMargins = UIEdgeInsets(top: 5, left: 10, bottom: 5, right: 10)
+        stackView.isLayoutMarginsRelativeArrangement = true
         return stackView
     }()
 
@@ -35,7 +38,6 @@ class FlightScheduleTableViewCell: UITableViewCell {
     private lazy var likeButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setBackgroundImage(UIImage(systemName: "heart"), for: .normal)
         button.setBackgroundImage(UIImage(systemName: "heart.fill"), for: .selected)
         button.addTarget(self, action: #selector(tapLikeButton), for: .touchUpInside)
         return button
@@ -181,16 +183,22 @@ class FlightScheduleTableViewCell: UITableViewCell {
         endDateLabel.text = endDate?.formatted(date: .complete, time: .omitted)
         returnStartCityLabel.text = data.endCity
         returnEndCityLabel.text = data.startCity
+
+        if delegate?.likeStatusList[indexPath!.row] == false {
+            likeButton.setBackgroundImage(UIImage(systemName: "heart"), for: .normal)
+        } else {
+            likeButton.setBackgroundImage(UIImage(systemName: "heart.fill"), for: .normal)
+        }
     }
 
     @objc private func tapLikeButton() {
         if delegate?.likeStatusList[indexPath!.row] == false {
             delegate?.likeStatusList.updateValue(true, forKey: indexPath!.row)
-            (delegate?.scheduleTableView.cellForRow(at: indexPath!) as! FlightScheduleTableViewCell).likeButton.setBackgroundImage(UIImage(systemName: "heart.fill"), for: .normal)
-            
+            likeButton.setBackgroundImage(UIImage(systemName: "heart.fill"), for: .normal)
+
         } else {
             delegate?.likeStatusList.updateValue(false, forKey: indexPath!.row)
-            (delegate?.scheduleTableView.cellForRow(at: indexPath!) as! FlightScheduleTableViewCell).likeButton.setBackgroundImage(UIImage(systemName: "heart"), for: .normal)
+            likeButton.setBackgroundImage(UIImage(systemName: "heart"), for: .normal)
         }
     }
 }

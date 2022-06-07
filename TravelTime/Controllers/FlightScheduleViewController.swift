@@ -37,8 +37,15 @@ class FlightScheduleViewController: UIViewController {
         NetworkService.loadFlightSchedule { sheduleInfo in
             DispatchQueue.main.async {
                 self.flightList = sheduleInfo
-                self.scheduleTableView.reloadData()
                 self.activityIndicator.stopAnimating()
+                self.likeStatusList = {
+                    var dictonary: [Int: Bool] = [:]
+                    let keysArray = Array(0...9)
+                    let valueArray = Array.init(repeating: false, count: 10)
+                    zip(keysArray, valueArray).forEach { dictonary[$0] = $1 }
+                    return dictonary
+                }()
+                self.scheduleTableView.reloadData()
             }
         }
     }
@@ -74,6 +81,8 @@ extension FlightScheduleViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let detailVC = FlightDetailViewController()
+        detailVC.delegate = self
+        detailVC.indexPath = indexPath
         detailVC.setupViews(data: flightList[indexPath.row])
         navigationController?.pushViewController(detailVC, animated: true)
     }
@@ -86,10 +95,10 @@ extension FlightScheduleViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: FlightScheduleTableViewCell.identifier, for: indexPath) as! FlightScheduleTableViewCell
-        cell.setupCell(data: flightList[indexPath.row])
-        cell.delegate = self
         cell.indexPath = indexPath
-        likeStatusList[indexPath.row] = false
+        cell.delegate = self
+        cell.selectionStyle = .none
+        cell.setupCell(data: flightList[indexPath.row])
         return cell
     }
 

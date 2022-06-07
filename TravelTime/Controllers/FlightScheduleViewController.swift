@@ -10,6 +10,16 @@ import UIKit
 class FlightScheduleViewController: UIViewController {
 
     var flightList = [ScheduleInfo.FlightInfo]()
+    var likeStatusList: [Int : Bool] = [:]
+
+    private lazy var activityIndicator: UIActivityIndicatorView = {
+        let spinner = UIActivityIndicatorView()
+        spinner.translatesAutoresizingMaskIntoConstraints = false
+        spinner.hidesWhenStopped = true
+        spinner.style = .large
+        spinner.startAnimating()
+        return spinner
+    }()
 
     lazy var scheduleTableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .grouped)
@@ -22,21 +32,33 @@ class FlightScheduleViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .systemMint
+        setupNavigationBar()
         layout()
         NetworkService.loadFlightSchedule { sheduleInfo in
             DispatchQueue.main.async {
                 self.flightList = sheduleInfo
                 self.scheduleTableView.reloadData()
-                print(sheduleInfo)
+                self.activityIndicator.stopAnimating()
             }
         }
     }
 
+    private func setupNavigationBar() {
+        self.navigationController?.navigationBar.prefersLargeTitles = true
+        self.navigationItem.title = "Маршруты"
+        self.navigationItem.backButtonTitle = "Назад"
+    }
+
     private func layout() {
+        view.addSubview(activityIndicator)
         view.addSubview(scheduleTableView)
+
+        view.bringSubviewToFront(activityIndicator)
         
         NSLayoutConstraint.activate([
+
+            activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             scheduleTableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             scheduleTableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             scheduleTableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
@@ -49,6 +71,12 @@ extension FlightScheduleViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         UITableView.automaticDimension
     }
+
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let detailVC = FlightDetailViewController()
+        detailVC.setupViews(data: flightList[indexPath.row])
+        navigationController?.pushViewController(detailVC, animated: true)
+    }
 }
 
 extension FlightScheduleViewController: UITableViewDataSource {
@@ -59,6 +87,9 @@ extension FlightScheduleViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: FlightScheduleTableViewCell.identifier, for: indexPath) as! FlightScheduleTableViewCell
         cell.setupCell(data: flightList[indexPath.row])
+        cell.delegate = self
+        cell.indexPath = indexPath
+        likeStatusList[indexPath.row] = false
         return cell
     }
 

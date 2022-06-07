@@ -9,12 +9,36 @@ import UIKit
 
 class FlightScheduleTableViewCell: UITableViewCell {
 
+    var likeState: Bool = false
+
+    weak var delegate: FlightScheduleViewController?
+
+    var indexPath: IndexPath?
+
     private lazy var travelInfoStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .vertical
         stackView.spacing = 10
         return stackView
+    }()
+
+    private lazy var cellHeaderStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .horizontal
+        stackView.distribution = .equalSpacing
+        stackView.alignment = .center
+        return stackView
+    }()
+
+    private lazy var likeButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setBackgroundImage(UIImage(systemName: "heart"), for: .normal)
+        button.setBackgroundImage(UIImage(systemName: "heart.fill"), for: .selected)
+        button.addTarget(self, action: #selector(tapLikeButton), for: .touchUpInside)
+        return button
     }()
 
     private lazy var departureInfoStackView: UIStackView = {
@@ -50,6 +74,7 @@ class FlightScheduleTableViewCell: UITableViewCell {
     private lazy var priceLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont.systemFont(ofSize: 24, weight: .bold)
         return label
     }()
 
@@ -113,7 +138,9 @@ class FlightScheduleTableViewCell: UITableViewCell {
     private func layout() {
         contentView.addSubview(travelInfoStackView)
 
-        [priceLabel, departureInfoStackView, returnInfoStackView].forEach { travelInfoStackView.addArrangedSubview($0) }
+        [cellHeaderStackView, departureInfoStackView, returnInfoStackView].forEach { travelInfoStackView.addArrangedSubview($0) }
+
+        [priceLabel, likeButton].forEach { cellHeaderStackView.addArrangedSubview($0) }
 
         [startDateLabel, departureRouteStackView].forEach { departureInfoStackView.addArrangedSubview($0) }
 
@@ -154,6 +181,17 @@ class FlightScheduleTableViewCell: UITableViewCell {
         endDateLabel.text = endDate?.formatted(date: .complete, time: .omitted)
         returnStartCityLabel.text = data.endCity
         returnEndCityLabel.text = data.startCity
+    }
+
+    @objc private func tapLikeButton() {
+        if delegate?.likeStatusList[indexPath!.row] == false {
+            delegate?.likeStatusList.updateValue(true, forKey: indexPath!.row)
+            (delegate?.scheduleTableView.cellForRow(at: indexPath!) as! FlightScheduleTableViewCell).likeButton.setBackgroundImage(UIImage(systemName: "heart.fill"), for: .normal)
+            
+        } else {
+            delegate?.likeStatusList.updateValue(false, forKey: indexPath!.row)
+            (delegate?.scheduleTableView.cellForRow(at: indexPath!) as! FlightScheduleTableViewCell).likeButton.setBackgroundImage(UIImage(systemName: "heart"), for: .normal)
+        }
     }
 }
 

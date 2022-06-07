@@ -16,6 +16,7 @@
 		F588238C284D2DCD0045C8DF /* FlightScheduleTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F588238B284D2DCD0045C8DF /* FlightScheduleTableViewCell.swift */; };
 		F5882390284D31230045C8DF /* UIViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F588238F284D31230045C8DF /* UIViewExtension.swift */; };
 		F5B4BBD3284EBB89002C26FA /* ScheduleInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5B4BBD2284EBB89002C26FA /* ScheduleInfo.swift */; };
+		F5F624A3284FC05300B12C11 /* FlightDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5F624A2284FC05300B12C11 /* FlightDetailViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +31,7 @@
 		F588238B284D2DCD0045C8DF /* FlightScheduleTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlightScheduleTableViewCell.swift; sourceTree = "<group>"; };
 		F588238F284D31230045C8DF /* UIViewExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewExtension.swift; sourceTree = "<group>"; };
 		F5B4BBD2284EBB89002C26FA /* ScheduleInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleInfo.swift; sourceTree = "<group>"; };
+		F5F624A2284FC05300B12C11 /* FlightDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlightDetailViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -76,6 +78,7 @@
 			isa = PBXGroup;
 			children = (
 				F5882383284D059C0045C8DF /* FlightScheduleViewController.swift */,
+				F5F624A2284FC05300B12C11 /* FlightDetailViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -200,6 +203,7 @@
 				F5882390284D31230045C8DF /* UIViewExtension.swift in Sources */,
 				F588236C284CF6620045C8DF /* AppDelegate.swift in Sources */,
 				F5B4BBD3284EBB89002C26FA /* ScheduleInfo.swift in Sources */,
+				F5F624A3284FC05300B12C11 /* FlightDetailViewController.swift in Sources */,
 				F588236E284CF6620045C8DF /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
